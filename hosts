@@ -1,0 +1,14 @@
+
+
+[centosbased]
+fedora_test ansible_host=10.55.44.116
+rocky9_client ansible_host=10.55.44.219
+
+[debianbased]
+ubuntu22_client ansible_host=10.55.44.229
+
+[all:children]
+centosbased
+debianbased
+
+

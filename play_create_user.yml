@@ -1,0 +1,38 @@
+---
+- name: create user
+  hosts: all
+#  become: yes
+  gather_facts: true
+  tasks:
+    - name: create user alice 
+      user:
+        name: alice
+        groups: '{{ sudo_group }}'
+        append: yes
+        shell: /bin/bash
+
+    - name: add public key
+      authorized_key:
+        user: alice
+        state: present
+        key: "{{ lookup('file', '/home/alice/.ssh/id_rsa.pub') }}"
+#      ignore_errors: yes
+    
+    - name: enable sudoers.d dir
+      lineinfile:
+        path: /etc/sudoers
+        regexp: '^includedir /etc/sudoers.d/'
+        owner: root
+        group: root
+        mode: 440
+        line: '#includedir /etc/sudoers.d'
+#        validate: '/usr/sbin/visudo -csf %s'
+
+    - name: sudo withoutpass
+      lineinfile:
+        path: /etc/sudoers.d/alice
+        create: yes
+        line: 'alice ALL=(ALL) NOPASSWD:ALL'
+
+
+
